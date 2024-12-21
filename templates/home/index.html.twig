@@ -10,48 +10,44 @@
             {% include 'parts/display.html.twig' %}
 
             <div class="list-section">
-                <h2 onclick="toggleMatiere()">Liste des matières</h2>
-                <div id="matieres" class="toggle-content">
+                <h2>Liste des matières</h2>
+                <ul class="menu">
                     {% for matiere in matieres %}
-                        <div class="clickable" onclick="toggleChapitres('chapitres-{{ matiere.id }}')">
-                            <strong>{{ matiere.nom }}</strong>
-                            <div id="chapitres-{{ matiere.id }}" class="toggle-content">
+                        <li class="menu-item">
+                            <div class="menu-title">{{ matiere.nom }}</div>
+                            <ul class="submenu">
                                 {% for chapitre in matiere.chapitresMatiere %}
-                                    <div class="clickable" onclick="toggleExercices('exercices-{{ chapitre.id }}')">
-                                        {{ chapitre.titre }}
-                                        <div id="exercices-{{ chapitre.id }}" class="toggle-content">
+                                    <li class="submenu-item">
+                                        <div class="submenu-title">{{ chapitre.titre }}</div>
+                                        <ul class="exercises">
                                             {% for exercice in chapitre.exercicesChapitre %}
-                                                <div class="clickable" onclick="toggleCommentaires('commentaires-{{ exercice.id }}')">
-                                                    {{ exercice.titre }}
-
-                                                    <!-- Affichage de la consigne de l'exercice -->
-                                                    <div id="consigne-{{ exercice.id }}" class="toggle-content">
-                                                        <p><strong>Consigne :</strong> {{ exercice.consigne }}</p>
+                                                <li class="exercise-item">
+                                                    <div class="exercise-title">{{ exercice.titre }}</div>
+                                                    <div class="exercise-consigne">
+                                                        <strong>Consigne:</strong> {{ exercice.consigne|e }}
                                                     </div>
-
-                                                    <!-- Affichage des commentaires de l'exercice -->
-                                                    <div id="commentaires-{{ exercice.id }}" class="toggle-content">
+                                                    <div class="comments">
                                                         {% for commentaire in exercice.commentairesExercice %}
-                                                            <p>{{ commentaire.contenu }}</p>
+                                                            <p>{{ commentaire.contenu|e }}</p>
                                                         {% else %}
                                                             <p>Aucun commentaire disponible.</p>
                                                         {% endfor %}
                                                     </div>
-                                                </div>
+                                                </li>
                                             {% else %}
-                                                <p>Aucun exercice disponible.</p>
+                                                <li>Aucun exercice disponible.</li>
                                             {% endfor %}
-                                        </div>
-                                    </div>
+                                        </ul>
+                                    </li>
                                 {% else %}
-                                    <p>Aucun chapitre disponible.</p>
+                                    <li>Aucun chapitre disponible.</li>
                                 {% endfor %}
-                            </div>
-                        </div>
+                            </ul>
+                        </li>
                     {% else %}
-                        <p>Aucune matière disponible.</p>
+                        <li>Aucune matière disponible.</li>
                     {% endfor %}
-                </div>
+                </ul>
             </div>
         {% else %}
             <p>Bienvenue sur notre site. Connectez-vous pour accéder à votre profil.</p>
@@ -60,65 +56,117 @@
     </div>
 
     <script>
-        // Fonction pour basculer l'affichage des matières
-        function toggleMatiere() {
-            const content = document.getElementById('matieres');
-            if (content) {
-                content.classList.toggle('active');
-            }
-        }
+        // Fonction pour basculer l'affichage des sous-menus
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuItems = document.querySelectorAll('.menu-title');
 
-        // Fonction pour basculer l'affichage des chapitres
-        function toggleChapitres(id) {
-            const content = document.getElementById(id);
-            if (content) {
-                content.classList.toggle('active');
-            }
-        }
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const submenu = item.nextElementSibling;
+                    if (submenu && submenu.classList.contains('submenu')) {
+                        submenu.classList.toggle('active');
+                    }
+                });
+            });
 
-        // Fonction pour basculer l'affichage des exercices
-        function toggleExercices(id) {
-            const content = document.getElementById(id);
-            if (content) {
-                content.classList.toggle('active');
-            }
-        }
+            const submenuItems = document.querySelectorAll('.submenu-title');
 
-        // Fonction pour basculer l'affichage des commentaires
-        function toggleCommentaires(id) {
-            const content = document.getElementById(id);
-            if (content) {
-                content.classList.toggle('active');
-            }
-        }
+            submenuItems.forEach(item => {
+                item.addEventListener('click', function(event) {
+                    event.stopPropagation();  // Empêche la propagation du clic pour éviter de fermer le menu parent
+                    const exerciseList = item.nextElementSibling;
+                    if (exerciseList && exerciseList.classList.contains('exercises')) {
+                        exerciseList.classList.toggle('active');
+                    }
+                });
+            });
+        });
     </script>
 
     <style>
-        .toggle-content {
-            display: none;
+        /* Style du menu principal */
+        .menu {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .menu-item {
+            margin-bottom: 10px;
+        }
+
+        .menu-title {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .menu-title:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Style des sous-menus */
+        .submenu {
+            list-style-type: none;
             padding-left: 20px;
+            display: none;
             margin-top: 5px;
         }
 
-        .toggle-content.active {
+        .submenu.active {
             display: block;
         }
 
-        .clickable {
-            cursor: pointer;
-            color: #007bff;
+        .submenu-item {
+            margin-bottom: 10px;
         }
 
-        .clickable:hover {
-            text-decoration: underline;
+        .submenu-title {
+            cursor: pointer;
+            padding: 5px;
+            background-color: #f0f0f0;
+            border-radius: 3px;
+            border: 1px solid #ccc;
         }
 
-        .list-section h2 {
-            cursor: pointer;
-            background-color: #f5f5f5;
-            padding: 10px;
-            border-radius: 5px;
+        .submenu-title:hover {
+            background-color: #e0e0e0;
         }
+
+        /* Style des exercices */
+        .exercises {
+            list-style-type: none;
+            padding-left: 20px;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .exercises.active {
+            display: block;
+        }
+
+        .exercise-item {
+            margin-bottom: 10px;
+        }
+
+        .exercise-title {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .exercise-consigne {
+            margin-top: 5px;
+        }
+
+        .comments {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .comments p {
+            margin: 5px 0;
+        }
+
     </style>
-
 {% endblock %}
