@@ -1,0 +1,17 @@
+<p>Bonjour {{ app.user.prenom }} {{ app.user.nom }}</p>
+<p>Email : {{ app.user.email }}</p>
+
+{% if 'ROLE_ADMIN' in app.user.roles %}
+    <a href="{{ path('app_admin') }}">Accéder à l'administration</a>
+{% endif %}
+
+{% if 'ROLE_USER' in app.user.roles %}
+    {% if not app.user.isBanned %}
+    <a href="{{ path('app_user') }}">Mon profil</a>
+    {% else %}
+        <p style="color: red;">Vous êtes banni et ne pouvez pas accéder aux différentes pages.</p>
+    {% endif %}
+{% endif %}
+
+
+<a href="{{ path('app_logout') }}">Déconnexion</a>

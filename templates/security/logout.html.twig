@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Déconnexion{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Déconnexion</h1>
+
+        {# Si l'utilisateur est connecté, afficher son nom et le bouton de déconnexion #}
+        {% if app.user %}
+            <p>Bonjour {{ app.user.username }}, vous êtes connecté !</p>
+            <a href="{{ path('app_logout') }}" class="btn btn-danger">Se déconnecter</a>
+        {% else %}
+            <p>Vous n'êtes pas connecté.</p>
+            <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
+        {% endif %}
+    </div>
+{% endblock %}

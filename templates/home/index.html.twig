@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <div class="example-wrapper">
+        <h1>Accueil</h1>
+
+        {% if app.user %}
+            {% include 'parts/display.html.twig' %}
+
+            <div class="list-section">
+                <h2 onclick="toggleMatiere()">Liste des matières</h2>
+                <div id="matieres" class="toggle-content">
+                    {% for matiere in matieres %}
+                        <div class="clickable" onclick="toggleChapitres('chapitres-{{ matiere.id }}')">
+                            <strong>{{ matiere.nom }}</strong>
+                            <div id="chapitres-{{ matiere.id }}" class="toggle-content">
+                                {% for chapitre in matiere.chapitresMatiere %}
+                                    <div class="clickable" onclick="toggleExercices('exercices-{{ chapitre.id }}')">
+                                        {{ chapitre.titre }}
+                                        <div id="exercices-{{ chapitre.id }}" class="toggle-content">
+                                            {% for exercice in chapitre.exercicesChapitre %}
+                                                <div class="clickable" onclick="toggleCommentaires('commentaires-{{ exercice.id }}')">
+                                                    {{ exercice.titre }}
+
+                                                    <!-- Affichage de la consigne de l'exercice -->
+                                                    <div id="consigne-{{ exercice.id }}" class="toggle-content">
+                                                        <p><strong>Consigne :</strong> {{ exercice.consigne }}</p>
+                                                    </div>
+
+                                                    <!-- Affichage des commentaires de l'exercice -->
+                                                    <div id="commentaires-{{ exercice.id }}" class="toggle-content">
+                                                        {% for commentaire in exercice.commentairesExercice %}
+                                                            <p>{{ commentaire.contenu }}</p>
+                                                        {% else %}
+                                                            <p>Aucun commentaire disponible.</p>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <p>Aucun exercice disponible.</p>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <p>Aucun chapitre disponible.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <p>Aucune matière disponible.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <p>Bienvenue sur notre site. Connectez-vous pour accéder à votre profil.</p>
+            <a href="{{ path('app_login') }}">Connexion</a>
+        {% endif %}
+    </div>
+
+    <script>
+        // Fonction pour basculer l'affichage des matières
+        function toggleMatiere() {
+            const content = document.getElementById('matieres');
+            if (content) {
+                content.classList.toggle('active');
+            }
+        }
+
+        // Fonction pour basculer l'affichage des chapitres
+        function toggleChapitres(id) {
+            const content = document.getElementById(id);
+            if (content) {
+                content.classList.toggle('active');
+            }
+        }
+
+        // Fonction pour basculer l'affichage des exercices
+        function toggleExercices(id) {
+            const content = document.getElementById(id);
+            if (content) {
+                content.classList.toggle('active');
+            }
+        }
+
+        // Fonction pour basculer l'affichage des commentaires
+        function toggleCommentaires(id) {
+            const content = document.getElementById(id);
+            if (content) {
+                content.classList.toggle('active');
+            }
+        }
+    </script>
+
+    <style>
+        .toggle-content {
+            display: none;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+
+        .toggle-content.active {
+            display: block;
+        }
+
+        .clickable {
+            cursor: pointer;
+            color: #007bff;
+        }
+
+        .clickable:hover {
+            text-decoration: underline;
+        }
+
+        .list-section h2 {
+            cursor: pointer;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+
+{% endblock %}
