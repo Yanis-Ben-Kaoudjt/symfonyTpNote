@@ -7,48 +7,53 @@
         <h1>Accueil</h1>
 
         {% if app.user %}
-            {% include 'parts/display.html.twig' %}
+            {% if app.user.isBanned %}
+                <p>Votre compte a été suspendu. Vous ne pouvez pas accéder aux fonctionnalités du site.</p>
+                <a href="{{ path('app_logout') }}">Déconnexion</a>
+            {% else %}
+                {% include 'parts/display.html.twig' %}
 
-            <div class="list-section">
-                <h2>Liste des matières</h2>
-                <ul class="menu">
-                    {% for matiere in matieres %}
-                        <li class="menu-item">
-                            <div class="menu-title">{{ matiere.nom }}</div>
-                            <ul class="submenu">
-                                {% for chapitre in matiere.chapitresMatiere %}
-                                    <li class="submenu-item">
-                                        <div class="submenu-title">{{ chapitre.titre }}</div>
-                                        <ul class="exercises">
-                                            {% for exercice in chapitre.exercicesChapitre %}
-                                                <li class="exercise-item">
-                                                    <div class="exercise-title">{{ exercice.titre }}</div>
-                                                    <div class="exercise-consigne">
-                                                        <strong>Consigne:</strong> {{ exercice.consigne|e }}
-                                                    </div>
-                                                    <div class="comments">
-                                                        {% for commentaire in exercice.commentairesExercice %}
-                                                            <p>{{ commentaire.contenu|e }}</p>
-                                                        {% else %}
-                                                            <p>Aucun commentaire disponible.</p>
-                                                        {% endfor %}
-                                                    </div>
-                                                </li>
-                                            {% else %}
-                                                <li>Aucun exercice disponible.</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </li>
-                                {% else %}
-                                    <li>Aucun chapitre disponible.</li>
-                                {% endfor %}
-                            </ul>
-                        </li>
-                    {% else %}
-                        <li>Aucune matière disponible.</li>
-                    {% endfor %}
-                </ul>
-            </div>
+                <div class="list-section">
+                    <h2>Liste des matières</h2>
+                    <ul class="menu">
+                        {% for matiere in matieres %}
+                            <li class="menu-item">
+                                <div class="menu-title">{{ matiere.nom }}</div>
+                                <ul class="submenu">
+                                    {% for chapitre in matiere.chapitresMatiere %}
+                                        <li class="submenu-item">
+                                            <div class="submenu-title">{{ chapitre.titre }}</div>
+                                            <ul class="exercises">
+                                                {% for exercice in chapitre.exercicesChapitre %}
+                                                    <li class="exercise-item">
+                                                        <div class="exercise-title">{{ exercice.titre }}</div>
+                                                        <div class="exercise-consigne">
+                                                            <strong>Consigne:</strong> {{ exercice.consigne|e }}
+                                                        </div>
+                                                        <div class="comments">
+                                                            {% for commentaire in exercice.commentairesExercice %}
+                                                                <p>{{ commentaire.contenu|e }}</p>
+                                                            {% else %}
+                                                                <p>Aucun commentaire disponible.</p>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </li>
+                                                {% else %}
+                                                    <li>Aucun exercice disponible.</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    {% else %}
+                                        <li>Aucun chapitre disponible.</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% else %}
+                            <li>Aucune matière disponible.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         {% else %}
             <p>Bienvenue sur notre site. Connectez-vous pour accéder à votre profil.</p>
             <a href="{{ path('app_login') }}">Connexion</a>
@@ -58,28 +63,34 @@
     <script>
         // Fonction pour basculer l'affichage des sous-menus
         document.addEventListener('DOMContentLoaded', function() {
-            const menuItems = document.querySelectorAll('.menu-title');
+            // Attacher les événements après chaque chargement
+            function setupMenu() {
+                const menuItems = document.querySelectorAll('.menu-title');
 
-            menuItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const submenu = item.nextElementSibling;
-                    if (submenu && submenu.classList.contains('submenu')) {
-                        submenu.classList.toggle('active');
-                    }
+                menuItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        const submenu = item.nextElementSibling;
+                        if (submenu && submenu.classList.contains('submenu')) {
+                            submenu.classList.toggle('active');
+                        }
+                    });
                 });
-            });
 
-            const submenuItems = document.querySelectorAll('.submenu-title');
+                const submenuItems = document.querySelectorAll('.submenu-title');
 
-            submenuItems.forEach(item => {
-                item.addEventListener('click', function(event) {
-                    event.stopPropagation();  // Empêche la propagation du clic pour éviter de fermer le menu parent
-                    const exerciseList = item.nextElementSibling;
-                    if (exerciseList && exerciseList.classList.contains('exercises')) {
-                        exerciseList.classList.toggle('active');
-                    }
+                submenuItems.forEach(item => {
+                    item.addEventListener('click', function(event) {
+                        event.stopPropagation();  // Empêche la propagation du clic pour éviter de fermer le menu parent
+                        const exerciseList = item.nextElementSibling;
+                        if (exerciseList && exerciseList.classList.contains('exercises')) {
+                            exerciseList.classList.toggle('active');
+                        }
+                    });
                 });
-            });
+            }
+
+            // Exécuter la fonction de configuration du menu
+            setupMenu();
         });
     </script>
 
