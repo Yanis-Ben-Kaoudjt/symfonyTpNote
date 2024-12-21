@@ -17,6 +17,14 @@ final class MatiereController extends AbstractController
     #[Route(name: 'app_matiere_index', methods: ['GET'])]
     public function index(MatiereRepository $matiereRepository): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('matiere/index.html.twig', [
             'matieres' => $matiereRepository->findAll(),
         ]);
@@ -25,6 +33,14 @@ final class MatiereController extends AbstractController
     #[Route('/new', name: 'app_matiere_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         $matiere = new Matiere();
         $form = $this->createForm(MatiereType::class, $matiere);
         $form->handleRequest($request);
@@ -45,6 +61,14 @@ final class MatiereController extends AbstractController
     #[Route('/{id}', name: 'app_matiere_show', methods: ['GET'])]
     public function show(Matiere $matiere): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('matiere/show.html.twig', [
             'matiere' => $matiere,
         ]);
@@ -53,6 +77,14 @@ final class MatiereController extends AbstractController
     #[Route('/{id}/edit', name: 'app_matiere_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Matiere $matiere, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(MatiereType::class, $matiere);
         $form->handleRequest($request);
 
@@ -71,7 +103,15 @@ final class MatiereController extends AbstractController
     #[Route('/{id}', name: 'app_matiere_delete', methods: ['POST'])]
     public function delete(Request $request, Matiere $matiere, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$matiere->getId(), $request->getPayload()->getString('_token'))) {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $matiere->getId(), $request->request->get('_token'))) {
             $entityManager->remove($matiere);
             $entityManager->flush();
         }

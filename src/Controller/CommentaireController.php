@@ -17,6 +17,14 @@ final class CommentaireController extends AbstractController
     #[Route(name: 'app_commentaire_index', methods: ['GET'])]
     public function index(CommentaireRepository $commentaireRepository): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('commentaire/index.html.twig', [
             'commentaires' => $commentaireRepository->findAll(),
         ]);
@@ -25,6 +33,14 @@ final class CommentaireController extends AbstractController
     #[Route('/new', name: 'app_commentaire_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         $commentaire = new Commentaire();
         $form = $this->createForm(CommentaireType::class, $commentaire);
         $form->handleRequest($request);
@@ -45,6 +61,14 @@ final class CommentaireController extends AbstractController
     #[Route('/{id}', name: 'app_commentaire_show', methods: ['GET'])]
     public function show(Commentaire $commentaire): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('commentaire/show.html.twig', [
             'commentaire' => $commentaire,
         ]);
@@ -53,6 +77,14 @@ final class CommentaireController extends AbstractController
     #[Route('/{id}/edit', name: 'app_commentaire_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(CommentaireType::class, $commentaire);
         $form->handleRequest($request);
 
@@ -71,7 +103,15 @@ final class CommentaireController extends AbstractController
     #[Route('/{id}', name: 'app_commentaire_delete', methods: ['POST'])]
     public function delete(Request $request, Commentaire $commentaire, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$commentaire->getId(), $request->getPayload()->getString('_token'))) {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $commentaire->getId(), $request->request->get('_token'))) {
             $entityManager->remove($commentaire);
             $entityManager->flush();
         }

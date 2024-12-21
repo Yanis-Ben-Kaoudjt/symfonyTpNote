@@ -9,22 +9,37 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/chapitre')]
-final class ChapitreController extends AbstractController
+class ChapitreController extends AbstractController
 {
-    #[Route(name: 'app_chapitre_index', methods: ['GET'])]
+    #[Route('/chapitre', name: 'app_chapitre_index', methods: ['GET'])]
     public function index(ChapitreRepository $chapitreRepository): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('chapitre/index.html.twig', [
             'chapitres' => $chapitreRepository->findAll(),
         ]);
     }
 
-    #[Route('/new', name: 'app_chapitre_new', methods: ['GET', 'POST'])]
+    #[Route('/chapitre/new', name: 'app_chapitre_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         $chapitre = new Chapitre();
         $form = $this->createForm(ChapitreType::class, $chapitre);
         $form->handleRequest($request);
@@ -42,17 +57,33 @@ final class ChapitreController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_chapitre_show', methods: ['GET'])]
+    #[Route('/chapitre/{id}', name: 'app_chapitre_show', methods: ['GET'])]
     public function show(Chapitre $chapitre): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         return $this->render('chapitre/show.html.twig', [
             'chapitre' => $chapitre,
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_chapitre_edit', methods: ['GET', 'POST'])]
+    #[Route('/chapitre/{id}/edit', name: 'app_chapitre_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Chapitre $chapitre, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
         $form = $this->createForm(ChapitreType::class, $chapitre);
         $form->handleRequest($request);
 
@@ -68,10 +99,18 @@ final class ChapitreController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_chapitre_delete', methods: ['POST'])]
+    #[Route('/chapitre/{id}', name: 'app_chapitre_delete', methods: ['POST'])]
     public function delete(Request $request, Chapitre $chapitre, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$chapitre->getId(), $request->getPayload()->getString('_token'))) {
+        $user = $this->getUser(); // Récupérer l'utilisateur connecté
+
+        // Vérifier si l'utilisateur est connecté et s'il a le rôle ROLE_ADMIN
+        if (!$user || !in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Si l'utilisateur n'est pas connecté ou n'a pas le rôle ROLE_ADMIN, rediriger vers la page d'accueil
+            return $this->redirectToRoute('app_home');
+        }
+
+        if ($this->isCsrfTokenValid('delete' . $chapitre->getId(), $request->request->get('_token'))) {
             $entityManager->remove($chapitre);
             $entityManager->flush();
         }
