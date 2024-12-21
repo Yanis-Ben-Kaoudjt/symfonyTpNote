@@ -53,18 +53,29 @@ class AppFixtures extends Fixture
         $bannedUser->setBanned(true);
         $manager->persist($bannedUser);
 
-        // Création de la matière
-        $matiere = new Matiere();
-        $matiere->setNom('Mathématiques');
-        $matiere->setDescription('Les bases des mathématiques');
-        $manager->persist($matiere);
+        // Création des matières
+        $matiere1 = new Matiere();
+        $matiere1->setNom('Mathématiques');
+        $matiere1->setDescription('Les bases des mathématiques');
+        $manager->persist($matiere1);
+
+        $matiere2 = new Matiere();
+        $matiere2->setNom('Français');
+        $matiere2->setDescription('Les bases du français');
+        $manager->persist($matiere2);
 
         // Création des chapitres
         $chapitre1 = new Chapitre();
         $chapitre1->setTitre('Les nombres');
         $chapitre1->setContenu('Les nombres entiers, les nombres décimaux, les fractions');
-        $chapitre1->setMatiere($matiere);
+        $chapitre1->setMatiere($matiere1);
         $manager->persist($chapitre1);
+
+        $chapitre2 = new Chapitre();
+        $chapitre2->setTitre('Les équations');
+        $chapitre2->setContenu('Résolution d\'équations simples');
+        $chapitre2->setMatiere($matiere1);
+        $manager->persist($chapitre2);
 
         // Création des exercices
         $exercice1 = new Exercice();
@@ -73,12 +84,24 @@ class AppFixtures extends Fixture
         $exercice1->setChapitre($chapitre1);
         $manager->persist($exercice1);
 
+        $exercice2 = new Exercice();
+        $exercice2->setTitre('Résolution d\'équations simples');
+        $exercice2->setConsigne('Résoudre les équations du type x + 3 = 5');
+        $exercice2->setChapitre($chapitre2);
+        $manager->persist($exercice2);
+
         // Création des commentaires
         $commentaire1 = new Commentaire();
         $commentaire1->setContenu('Cet exercice est très bien');
         $commentaire1->setDateCreation(new \DateTime());
         $commentaire1->setExercice($exercice1);
         $manager->persist($commentaire1);
+
+        $commentaire2 = new Commentaire();
+        $commentaire2->setContenu('Cet exercice est nul');
+        $commentaire2->setDateCreation(new \DateTime());
+        $commentaire2->setExercice($exercice2);
+        $manager->persist($commentaire2);
 
         $manager->flush();
     }
