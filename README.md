@@ -5,11 +5,11 @@ Quand on se trouve sur la page d'accueil et qu'on est connecté sans être banni
 
 Logins(dans les fixtures):
 
-email: admin@example.com 
+email: admin@example.com
 mdp: adminpassword
 
-email: user@example.com 
+email: user@example.com
 mdp: userpassword
 
-email: banned@example.com 
+email: banned@example.com
 mdp: bannedpassword
