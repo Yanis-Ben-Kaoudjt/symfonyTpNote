@@ -98,7 +98,7 @@ class AppFixtures extends Fixture
         $manager->persist($commentaire1);
 
         $commentaire2 = new Commentaire();
-        $commentaire2->setContenu('Cet exercice est nul');
+        $commentaire2->setContenu('Cet exercice est trop nul');
         $commentaire2->setDateCreation(new \DateTime());
         $commentaire2->setExercice($exercice2);
         $manager->persist($commentaire2);
